@@ -10,17 +10,17 @@
 
 -- Email doit contenir un @
 ALTER TABLE users
-    ADD CONSTRAINT IF NOT EXISTS chk_users_email_format
+    ADD CONSTRAINT chk_users_email_format
     CHECK (email LIKE '%@%');
 
 -- Rôle doit être valide
 ALTER TABLE users
-    ADD CONSTRAINT IF NOT EXISTS chk_users_role
+    ADD CONSTRAINT chk_users_role
     CHECK (role IN ('citizen', 'company', 'authority', 'institution', 'admin'));
 
 -- Numéro de téléphone Cameroun (optionnel mais si présent, format +237...)
 ALTER TABLE users
-    ADD CONSTRAINT IF NOT EXISTS chk_users_phone_format
+    ADD CONSTRAINT chk_users_phone_format
     CHECK (phone IS NULL OR phone ~ '^\+?[0-9]{8,15}$');
 
 
@@ -30,28 +30,28 @@ ALTER TABLE users
 
 -- Statut valide
 ALTER TABLE tenders
-    ADD CONSTRAINT IF NOT EXISTS chk_tenders_status
+    ADD CONSTRAINT chk_tenders_status
     CHECK (status IN ('open', 'closed', 'awarded', 'cancelled', 'infructuous'));
 
 -- Type de procédure valide
 ALTER TABLE tenders
-    ADD CONSTRAINT IF NOT EXISTS chk_tenders_procedure_type
+    ADD CONSTRAINT chk_tenders_procedure_type
     CHECK (procedure_type IS NULL OR
            procedure_type IN ('AONO', 'AOIO', 'AOR', 'DC', 'gre_a_gre', 'AMI', 'DDP'));
 
 -- Montant positif si renseigné
 ALTER TABLE tenders
-    ADD CONSTRAINT IF NOT EXISTS chk_tenders_amount_positive
+    ADD CONSTRAINT chk_tenders_amount_positive
     CHECK (estimated_amount IS NULL OR estimated_amount > 0);
 
 -- La deadline ne peut pas être avant la date de publication
 ALTER TABLE tenders
-    ADD CONSTRAINT IF NOT EXISTS chk_tenders_dates_coherent
+    ADD CONSTRAINT chk_tenders_dates_coherent
     CHECK (deadline IS NULL OR publication_date IS NULL OR deadline >= publication_date);
 
 -- Région doit être une des 10 régions du Cameroun (si renseignée)
 ALTER TABLE tenders
-    ADD CONSTRAINT IF NOT EXISTS chk_tenders_region
+    ADD CONSTRAINT chk_tenders_region
     CHECK (region IS NULL OR region IN (
         'Adamaoua', 'Centre', 'Est', 'Extrême-Nord',
         'Littoral', 'Nord', 'Nord-Ouest', 'Ouest', 'Sud', 'Sud-Ouest'
@@ -64,17 +64,17 @@ ALTER TABLE tenders
 
 -- Rôle valide
 ALTER TABLE messages
-    ADD CONSTRAINT IF NOT EXISTS chk_messages_role
+    ADD CONSTRAINT chk_messages_role
     CHECK (role IN ('user', 'assistant', 'system'));
 
 -- Feedback dans la plage autorisée
 ALTER TABLE messages
-    ADD CONSTRAINT IF NOT EXISTS chk_messages_feedback
+    ADD CONSTRAINT chk_messages_feedback
     CHECK (feedback IS NULL OR feedback IN (-1, 0, 1));
 
 -- Tokens non négatifs
 ALTER TABLE messages
-    ADD CONSTRAINT IF NOT EXISTS chk_messages_tokens_positive
+    ADD CONSTRAINT chk_messages_tokens_positive
     CHECK (
         (tokens_input IS NULL OR tokens_input >= 0) AND
         (tokens_output IS NULL OR tokens_output >= 0)
@@ -82,7 +82,7 @@ ALTER TABLE messages
 
 -- Latence positive
 ALTER TABLE messages
-    ADD CONSTRAINT IF NOT EXISTS chk_messages_latency_positive
+    ADD CONSTRAINT chk_messages_latency_positive
     CHECK (latency_ms IS NULL OR latency_ms >= 0);
 
 
@@ -92,12 +92,12 @@ ALTER TABLE messages
 
 -- Canal valide
 ALTER TABLE alerts
-    ADD CONSTRAINT IF NOT EXISTS chk_alerts_channel
+    ADD CONSTRAINT chk_alerts_channel
     CHECK (channel IN ('in_app', 'email', 'whatsapp', 'all'));
 
 -- Montant min < montant max (si les deux sont renseignés)
 ALTER TABLE alerts
-    ADD CONSTRAINT IF NOT EXISTS chk_alerts_amounts_coherent
+    ADD CONSTRAINT chk_alerts_amounts_coherent
     CHECK (
         min_amount IS NULL OR
         max_amount IS NULL OR
@@ -106,7 +106,7 @@ ALTER TABLE alerts
 
 -- Montants positifs
 ALTER TABLE alerts
-    ADD CONSTRAINT IF NOT EXISTS chk_alerts_amounts_positive
+    ADD CONSTRAINT chk_alerts_amounts_positive
     CHECK (
         (min_amount IS NULL OR min_amount >= 0) AND
         (max_amount IS NULL OR max_amount >= 0)
@@ -119,7 +119,7 @@ ALTER TABLE alerts
 
 -- Score entre 0 et 1
 ALTER TABLE alert_matches
-    ADD CONSTRAINT IF NOT EXISTS chk_matches_score_range
+    ADD CONSTRAINT chk_matches_score_range
     CHECK (score IS NULL OR (score >= 0.0 AND score <= 1.0));
 
 
@@ -129,7 +129,7 @@ ALTER TABLE alert_matches
 
 -- Type de document valide
 ALTER TABLE documents
-    ADD CONSTRAINT IF NOT EXISTS chk_documents_type
+    ADD CONSTRAINT chk_documents_type
     CHECK (type IN (
         'submission_letter', 'technical_offer', 'financial_offer',
         'qualification_file', 'recourse', 'contract_draft'
@@ -137,12 +137,12 @@ ALTER TABLE documents
 
 -- Statut valide
 ALTER TABLE documents
-    ADD CONSTRAINT IF NOT EXISTS chk_documents_status
+    ADD CONSTRAINT chk_documents_status
     CHECK (status IN ('draft', 'finalized', 'submitted'));
 
 -- Version positive
 ALTER TABLE documents
-    ADD CONSTRAINT IF NOT EXISTS chk_documents_version_positive
+    ADD CONSTRAINT chk_documents_version_positive
     CHECK (version >= 1);
 
 
@@ -152,7 +152,7 @@ ALTER TABLE documents
 
 -- Statut valide
 ALTER TABLE conversations
-    ADD CONSTRAINT IF NOT EXISTS chk_conversations_status
+    ADD CONSTRAINT chk_conversations_status
     CHECK (status IN ('active', 'archived', 'deleted'));
 
 
@@ -162,17 +162,17 @@ ALTER TABLE conversations
 
 -- Statut valide
 ALTER TABLE sync_jobs
-    ADD CONSTRAINT IF NOT EXISTS chk_sync_jobs_status
+    ADD CONSTRAINT chk_sync_jobs_status
     CHECK (status IN ('running', 'success', 'failed'));
 
 -- Source valide
 ALTER TABLE sync_jobs
-    ADD CONSTRAINT IF NOT EXISTS chk_sync_jobs_source
+    ADD CONSTRAINT chk_sync_jobs_source
     CHECK (source IN ('armp_feed', 'coleps_api', 'manual'));
 
 -- Records non négatif
 ALTER TABLE sync_jobs
-    ADD CONSTRAINT IF NOT EXISTS chk_sync_jobs_records_positive
+    ADD CONSTRAINT chk_sync_jobs_records_positive
     CHECK (records_synced >= 0);
 
 
