@@ -306,7 +306,16 @@ async def _scrape_pages(client: httpx.AsyncClient, pages: int = SYNC_PAGES) -> l
     for page_num in range(1, pages + 1):
         url = "https://armp.cm" if page_num == 1 else f"https://armp.cm?page={page_num}"
         try:
-            resp = await client.get(url, timeout=20)
+            resp = None
+            for attempt in range(3):
+                try:
+                    resp = await client.get(url, timeout=45)
+                    break
+                except (httpx.TimeoutException, httpx.ConnectError) as retry_exc:
+                    if attempt == 2:
+                        raise
+                    log.warning(f"Page {page_num} tentative {attempt + 1}/3 échouée ({retry_exc}), nouvel essai...")
+                    await asyncio.sleep(3)
             if resp.status_code != 200:
                 log.warning(f"Page {page_num} → HTTP {resp.status_code}")
                 break
