@@ -1,6 +1,6 @@
 """
 Configuration centrale — toutes les variables d'environnement.
-Lire depuis le fichier .env — aucune valeur sensible dans le code.
+Lire depuis les variables d'environnement (pas de fichier .env en production).
 """
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import List
@@ -8,8 +8,7 @@ from typing import List
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=".env",
-        env_file_encoding="utf-8",
+        env_file=None,  # Pas de fichier .env — lire depuis les variables d'environnement
         case_sensitive=True,
         extra="ignore",
     )
@@ -85,3 +84,4 @@ class Settings(BaseSettings):
     SENTRY_DSN: str = ""
 
 settings = Settings()
+
