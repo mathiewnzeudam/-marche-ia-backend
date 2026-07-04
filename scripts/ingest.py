@@ -24,7 +24,8 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s | %(message)s")
 log = logging.getLogger(__name__)
 
 # ── Configuration ─────────────────────────────────────────────
-QDRANT_URL    = os.environ.get("QDRANT_URL", "http://localhost:6333")
+QDRANT_URL     = os.environ.get("QDRANT_URL", "http://localhost:6333")
+QDRANT_API_KEY = os.environ.get("QDRANT_API_KEY", "")
 COLLECTION    = "marche_ia_knowledge"
 EMBED_MODEL   = "paraphrase-multilingual-mpnet-base-v2"
 EMBED_DIM     = 768
@@ -224,7 +225,7 @@ async def index_chunks(client: AsyncQdrantClient, model: SentenceTransformer, ch
 async def ingest(keys: list[str]):
     log.info("Chargement du modèle d'embedding...")
     model  = SentenceTransformer(EMBED_MODEL)
-    client = AsyncQdrantClient(url=QDRANT_URL)
+    client = AsyncQdrantClient(url=QDRANT_URL, api_key=QDRANT_API_KEY or None)
     await ensure_collection(client)
 
     for key in keys:
