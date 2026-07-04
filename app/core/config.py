@@ -55,8 +55,8 @@ class Settings(BaseSettings):
     QDRANT_COLLECTION: str = "marche_ia_knowledge"
 
     # Embeddings
-    EMBEDDING_MODEL: str = "paraphrase-multilingual-mpnet-base-v2"
-    EMBEDDING_DIM: int = 768
+    EMBEDDING_MODEL: str = "paraphrase-multilingual-MiniLM-L12-v2"
+    EMBEDDING_DIM: int = 384
     RAG_TOP_K: int = 8
     RAG_MIN_SCORE: float = 0.65
 
